@@ -1,0 +1,26 @@
+{
+  "name": "workspace",
+  "version": "1.0.0",
+  "description": "Running Track Map",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/allonyaron/running-track-map.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/allonyaron/running-track-map/issues"
+  },
+  "homepage": "https://github.com/allonyaron/running-track-map",
+  "dependencies": {
+    "express": "^4.12.2",
+    "express-handlebars": "^1.2.1",
+    "mongodb": "^1.4.33",
+    "request": "^2.53.0",
+    "xml2js": "^0.4.5"
+  }
+}
