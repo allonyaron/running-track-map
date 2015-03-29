@@ -1,0 +1,17 @@
+var mongoose = require('mongoose');
+var Schema = mongoose.schema;
+
+var runningTrackSchema = new Schema({
+    "name" : String,
+    "size" : Numbe,
+    "trackType" : String,
+    "location" : String,
+    "geometry" : geoJsonSchema }
+});
+
+var geoJsonSchema = new Schema({
+    { "type": String, 
+    "coordinates": [Number] }
+});
+
+module.exports = mongoose.model('RunningTrack', runningTrackSchema);

@@ -2,6 +2,7 @@ var MongoClient = require('mongodb').MongoClient;
 var request = require("request");
 var parseString = require('xml2js').parseString;
 
+
 MongoClient.connect('mongodb://localhost:27017/running', function(err, db) {
     if(err) throw err;
 
@@ -10,18 +11,36 @@ MongoClient.connect('mongodb://localhost:27017/running', function(err, db) {
             if(error) throw error;
             if (!error && response.statusCode == 200) {
                 var runningTrackXML = body;
+                var geoTrack = {};
                 parseString(runningTrackXML, {ignoreAttrs: true}, function (err, result) {
                     var runningTrackArray = result.runningtracks.facility;
                     
-                    //insert data
+                    //drop table
                     db.collection('runningtracks').drop();
-                    db.collection('runningtracks').insert(runningTrackArray, function (err, data) {
-                            if(err) throw err;
-                            console.log('records inserted');
-                            db.close();
-                    }); 
+                    //insert track data
+                    runningTrackArray.forEach(function(elem) {
+                        if(elem.lon[0] && elem.lat[0]) {
+                            geoTrack = {
+                                "name" : elem.Name[0],
+                                "size" : elem.Size[0],
+                                "location" : elem.Location[0],
+                                "location" : {"type": "Point", 
+                                              "coordinates": [parseFloat(elem.lon[0]), parseFloat(elem.lat[0])] }
+                                
+                                };
+                            db.collection('runningtracks').insert(geoTrack, function (err, data) {
+                                    if(err) throw err;
+                                    console.log('records inserted');
+                            
+                            });         
+                       //console.log('elem - ' + JSON.stringify(geoTrack)); 
+                        };
+                    });
+                    
                 });
-                
+                                 
             }
+            
     });
+    // db.close();  
 });
