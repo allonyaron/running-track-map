@@ -24,7 +24,7 @@ MongoClient.connect('mongodb://localhost:27017/running', function(err, db) {
                                 "name" : elem.Name[0],
                                 "size" : elem.Size[0],
                                 "location" : elem.Location[0],
-                                "location" : {"type": "Point", 
+                                "geometry" : {"type": "Point", 
                                               "coordinates": [parseFloat(elem.lon[0]), parseFloat(elem.lat[0])] }
                                 
                                 };
