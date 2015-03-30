@@ -33,16 +33,16 @@ MongoClient.connect('mongodb://localhost:27017/running', function(err, db) {
                        //console.log('elem - ' + JSON.stringify(geoTrack)); 
                         };
                     });
-                            db.collection('runningtracks').insert(geoTrackArray, function (err, data) {
-                                    if(err) throw err;
-                                    console.log('records inserted');
-                            
-                            });
+                    db.collection('runningtracks').insert(geoTrackArray, function (err, data) {
+                        if(err) throw err;
+                        console.log('records inserted');
+                        db.close();                           
+                    });
                                                 
                 });
                                  
             }
             
     });
-    // db.close();  
+ 
 });
