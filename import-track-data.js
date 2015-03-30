@@ -11,6 +11,7 @@ MongoClient.connect('mongodb://localhost:27017/running', function(err, db) {
             if(error) throw error;
             if (!error && response.statusCode == 200) {
                 var runningTrackXML = body;
+                var geoTrackArray = [];
                 var geoTrack = {};
                 parseString(runningTrackXML, {ignoreAttrs: true}, function (err, result) {
                     var runningTrackArray = result.runningtracks.facility;
@@ -28,15 +29,16 @@ MongoClient.connect('mongodb://localhost:27017/running', function(err, db) {
                                               "coordinates": [parseFloat(elem.lon[0]), parseFloat(elem.lat[0])] }
                                 
                                 };
-                            db.collection('runningtracks').insert(geoTrack, function (err, data) {
-                                    if(err) throw err;
-                                    console.log('records inserted');
-                            
-                            });         
+                           geoTrackArray.push(geoTrack);
                        //console.log('elem - ' + JSON.stringify(geoTrack)); 
                         };
                     });
-                    
+                            db.collection('runningtracks').insert(geoTrackArray, function (err, data) {
+                                    if(err) throw err;
+                                    console.log('records inserted');
+                            
+                            });
+                                                
                 });
                                  
             }
