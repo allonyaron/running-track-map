@@ -1,12 +1,12 @@
 <div id="map">
 {{#each runningTrackArr}}
     {{#if @first}}
-        <div id="destMap" data-name="{{Name}}" data-lat="{{lat}}" data-lng="{{lon}}"></div>
+        <div id="destMap" data-name="{{name}}" data-lat="{{lat}}" data-lng="{{lng}}"></div>
     {{/if}}
 {{/each}}
 {{#each runningTrackArr}}
     {{#unless @first}}
-    	<div class="destMarker" data-name="{{Name}}" data-lat="{{lat}}" data-lng="{{lon}}"></div>
+    	<div class="destMarker" data-name="{{name}}" data-lat="{{lat}}" data-lng="{{lng}}"></div>
     {{/unless}}	
 {{/each}}
 

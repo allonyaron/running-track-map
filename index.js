@@ -5,6 +5,7 @@ var MongoClient = require('mongodb').MongoClient;
 
 var app = express();
 var runningTracks = {};
+var runningTrackArr = [];
 
 app.engine('hbs', exphbs({extname:'hbs', defaultLayout:'main.hbs'}));
 app.set('view engine', 'hbs');
@@ -19,14 +20,24 @@ MongoClient.connect('mongodb://localhost:27017/running', function(err, db) {
     if(err) throw err;
     db.collection('runningtracks').find().toArray(function(err, docs) {
         if(err) throw err;
+            docs.forEach(function(doc) {
+                     var track = {
+                        name : doc.name,
+                        lat : doc.geometry.coordinates[1],
+                        lng : doc.geometry.coordinates[0]
+                     };
+                    runningTrackArr.push(track);
+            });
+            //console.log('runningTrackArr - ' + JSON.stringify(runningTrackArr));
+        runningTracks.runningTrackArr = runningTrackArr;
 
-        runningTracks = {
-          runningTrackArr: docs
-        };
         db.close();
     });
 });
  
+app.get('/api/:lng/:lat',function(req,res) {
+    res.send(req.params.lng);
+});
  
 app.get('/', function (req, res) {
     res.render('index', runningTracks);

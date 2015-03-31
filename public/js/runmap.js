@@ -4,6 +4,8 @@ function initMapbox() {
   var markerName = $('#destMap').attr('data-name');
   var fitBounds = false;
   
+  console.log('venueLng - ' +venueLng);
+  
   if(venueLat && venueLng && venueLat !== '0' && venueLng !== '0') {
     L.mapbox.accessToken = 'pk.eyJ1IjoiYWxsb255YXJvbiIsImEiOiJCRTBYUHBJIn0.p8AqSYVB7J57cXtoINr7tQ';
     var map = L.mapbox.map('map', 'allonyaron.lcghobge', {attributionControl: false}).setView([venueLat, venueLng], 15);
@@ -30,6 +32,8 @@ function initMapbox() {
         var markerLat = $(element).attr('data-lat');
         var markerLng = $(element).attr('data-lng');
         var markerName = $(element).attr('data-name');
+
+console.log('markerLat -' + markerLat);
 
         //nothing is safe
         if(markerLat && markerLng && markerLat !== '0' && markerLng !== '0') {
@@ -60,5 +64,6 @@ function initMapbox() {
 };    
     
 $(document).ready(function() {    
+    console.log('init');
     initMapbox(); 
 });
