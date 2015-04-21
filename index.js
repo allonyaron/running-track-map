@@ -15,8 +15,6 @@ app.use(express.static('public'));
 //get running track data 
 MongoClient.connect('mongodb://localhost:27017/running', function(err, db) {
     
-//db.runningtracks.find({geometry : {$near : {$geometry : { type : "Point" , coordinates : [-73.98267659999999, 40.6758102] }}}})
-    
     if(err) throw err;
     db.collection('runningtracks').find().toArray(function(err, docs) {
         if(err) throw err;
@@ -28,10 +26,7 @@ MongoClient.connect('mongodb://localhost:27017/running', function(err, db) {
                      };
                     runningTrackArr.push(track);
             });
-            //console.log('runningTrackArr - ' + JSON.stringify(runningTrackArr));
         runningTracks.runningTrackArr = runningTrackArr;
-
-        //db.close();
     });
 });
  
@@ -39,7 +34,6 @@ app.get('/api/nearby/:lng/:lat',function(req,res) {
     MongoClient.connect('mongodb://localhost:27017/running', function(err, db) {
         if(err) console.log('connection error');
         db.collection('runningtracks').find({geometry : {$near : {$geometry : { type : "Point" , coordinates : [-73.98267659999999, 40.6758102] }}}}).toArray(function(err, docs) {
-//        db.collection('runningtracks').findOne(function(err, docs) {
             if(err) throw err;
             res.send(docs);    
         })
