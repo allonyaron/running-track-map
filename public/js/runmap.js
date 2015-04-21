@@ -1,14 +1,28 @@
-function initMapbox() {
-  var venueLat = $('#destMap').attr('data-lat');
-  var venueLng = $('#destMap').attr('data-lng');
-  var markerName = $('#destMap').attr('data-name');
+
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(geoSuccess,  handle_error);
+  } else {
+    error('not supported');
+  }
+}
+function geoSuccess(position){
+  initMapbox(position.coords.latitude, position.coords.longitude);
+}
+  
+function handle_error(err) {
+  if (err.code == 1) {
+    // user said no!
+  }
+}
+  
+function initMapbox(venueLat, venueLng) {
+  
   var fitBounds = false;
-  
-  console.log('venueLng - ' +venueLng);
-  
+
   if(venueLat && venueLng && venueLat !== '0' && venueLng !== '0') {
     L.mapbox.accessToken = 'pk.eyJ1IjoiYWxsb255YXJvbiIsImEiOiJCRTBYUHBJIn0.p8AqSYVB7J57cXtoINr7tQ';
-    var map = L.mapbox.map('map', 'allonyaron.lcghobge', {attributionControl: false}).setView([venueLat, venueLng], 15);
+    var map = L.mapbox.map('map', 'allonyaron.lcghobge', {attributionControl: false});
 
     var myLayer = L.mapbox.featureLayer().addTo(map);
     var geoJson = {
@@ -20,7 +34,7 @@ function initMapbox() {
             coordinates: [venueLng, venueLat]
           },
           properties : {
-            title: markerName,
+            title: 'me',
             "marker-size": 'medium',
             "marker-color": '#fb351c'
           }
@@ -33,7 +47,6 @@ function initMapbox() {
         var markerLng = $(element).attr('data-lng');
         var markerName = $(element).attr('data-name');
 
-console.log('markerLat -' + markerLat);
 
         //nothing is safe
         if(markerLat && markerLng && markerLat !== '0' && markerLng !== '0') {
@@ -45,9 +58,10 @@ console.log('markerLat -' + markerLat);
               coordinates: [markerLng , markerLat]
             },
             properties : {
-              title: markerName,
-              "marker-size": 'medium',
-              "marker-color": '#00AEEF'
+              "title": markerName,
+              "marker-size": 'large',
+              "marker-color": '#00AEEF',
+              "marker-symbol": index+1
             }
           });
         }
@@ -64,6 +78,5 @@ console.log('markerLat -' + markerLat);
 };    
     
 $(document).ready(function() {    
-    console.log('init');
-    initMapbox(); 
+    getLocation(); 
 });
