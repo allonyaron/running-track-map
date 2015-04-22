@@ -1,4 +1,6 @@
 
+
+
 function getLocation() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(geoSuccess,  handle_error);
@@ -16,16 +18,30 @@ function handle_error(err) {
   }
 }
   
-function initMapbox(venueLat, venueLng) {
-  
-  var fitBounds = false;
+function getTrackData(lat,lng) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/api/nearby/' + lng + '/' + lat);
+  xhr.onreadystatechange = function() {
+    if ((xhr.readyState===4) && (xhr.status===200)) {
+      var tracks = JSON.parse(xhr.responseText);
+      return tracks;
+    }
+  }
+  xhr.send();
+} 
 
+function initMapbox(venueLat, venueLng) {
+  var runningTracks;
+  var markerLat, markerLng, markerName;
+  var fitBounds = false;
+  var geoJson = {};
+  
   if(venueLat && venueLng && venueLat !== '0' && venueLng !== '0') {
     L.mapbox.accessToken = 'pk.eyJ1IjoiYWxsb255YXJvbiIsImEiOiJCRTBYUHBJIn0.p8AqSYVB7J57cXtoINr7tQ';
     var map = L.mapbox.map('map', 'allonyaron.lcghobge', {attributionControl: false});
 
     var myLayer = L.mapbox.featureLayer().addTo(map);
-    var geoJson = {
+    geoJson = {
       type : 'FeatureCollection',
       features : [{
           type : 'Feature',
@@ -40,40 +56,51 @@ function initMapbox(venueLat, venueLng) {
           }
         }]
       };
+      
+      //runningTracks = getTrackData(venueLat, venueLng);
+        var count = 1;
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/api/nearby/' + venueLng + '/' + venueLat);
+        xhr.onreadystatechange = function() {
+          if ((xhr.readyState===4) && (xhr.status===200)) {
+            runningTracks = JSON.parse(xhr.responseText);
 
-      // Add markers
-      $('.destMarker').each(function(index, element) {
-        var markerLat = $(element).attr('data-lat');
-        var markerLng = $(element).attr('data-lng');
-        var markerName = $(element).attr('data-name');
-
-
-        //nothing is safe
-        if(markerLat && markerLng && markerLat !== '0' && markerLng !== '0') {
-          fitBounds = true;
-          geoJson.features.push({
-            type : 'Feature',
-            geometry: {
-              type: 'Point',
-              coordinates: [markerLng , markerLat]
-            },
-            properties : {
-              "title": markerName,
-              "marker-size": 'large',
-              "marker-color": '#00AEEF',
-              "marker-symbol": index+1
-            }
-          });
+              for (var key in  runningTracks) {
+                      markerLat = runningTracks[key].geometry.coordinates[1];
+                      markerLng = runningTracks[key].geometry.coordinates[0];
+                      markerName = runningTracks[key].name;
+          
+                  //nothing is safe
+                  if(markerLat && markerLng && markerLat !== '0' && markerLng !== '0') {
+                    fitBounds = true;
+                    geoJson.features.push({
+                      type : 'Feature',
+                      geometry: {
+                        type: 'Point',
+                        coordinates: [markerLng , markerLat]
+                      },
+                      properties : {
+                        "title": markerName,
+                        "marker-size": 'large',
+                        "marker-color": '#00AEEF',
+                        "marker-symbol": count
+                      }
+                    });
+                    count++;
+                  }
+                };
+                myLayer.setGeoJSON(geoJson);
+                map.scrollWheelZoom.disable();
+                map.touchZoom.disable();
+          
+                if (fitBounds) {
+                  map.fitBounds(myLayer.getBounds());  
+                }                
+              
+          }
         }
-      });
+        xhr.send();
 
-      myLayer.setGeoJSON(geoJson);
-      map.scrollWheelZoom.disable();
-      map.touchZoom.disable();
-
-      if (fitBounds) {
-        map.fitBounds(myLayer.getBounds());  
-      }
     }
 };    
     
