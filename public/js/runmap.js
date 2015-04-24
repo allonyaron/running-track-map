@@ -18,13 +18,13 @@ function handle_error(err) {
   }
 }
   
-function getTrackData(lat,lng) {
+function getTrackData(lat,lng, cb) {
   var xhr = new XMLHttpRequest();
   xhr.open('GET', '/api/nearby/' + lng + '/' + lat);
   xhr.onreadystatechange = function() {
     if ((xhr.readyState===4) && (xhr.status===200)) {
       var tracks = JSON.parse(xhr.responseText);
-      return tracks;
+      return cb(tracks);
     }
   }
   xhr.send();
@@ -57,14 +57,9 @@ function initMapbox(venueLat, venueLng) {
         }]
       };
       
-      //runningTracks = getTrackData(venueLat, venueLng);
+      
         var count = 1;
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/api/nearby/' + venueLng + '/' + venueLat);
-        xhr.onreadystatechange = function() {
-          if ((xhr.readyState===4) && (xhr.status===200)) {
-            runningTracks = JSON.parse(xhr.responseText);
-
+        getTrackData(venueLat, venueLng, function(runningTracks) {
               for (var key in  runningTracks) {
                       markerLat = runningTracks[key].geometry.coordinates[1];
                       markerLng = runningTracks[key].geometry.coordinates[0];
@@ -96,10 +91,9 @@ function initMapbox(venueLat, venueLng) {
                 if (fitBounds) {
                   map.fitBounds(myLayer.getBounds());  
                 }                
-              
-          }
-        }
-        xhr.send();
+
+        });
+
 
     }
 };    
