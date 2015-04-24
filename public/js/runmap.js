@@ -24,7 +24,7 @@ function getTrackData(lat,lng, cb) {
   xhr.onreadystatechange = function() {
     if ((xhr.readyState===4) && (xhr.status===200)) {
       var tracks = JSON.parse(xhr.responseText);
-      return cb(tracks);
+      cb(tracks);
     }
   }
   xhr.send();
